@@ -1,92 +1,112 @@
-# star
+# ⭐ star
 
-A spinning ASCII figure for the terminal, with perspective, depth shading and a choice of colors, characters and spin directions. An installer adds a `star` command so you can run it from anywhere.
+A spinning ASCII star for your terminal. You can change its colors, the characters it's made of, and the way it spins. The installer also adds a `star` command, so you can run it from anywhere.
 
-## Requirements
+Русская инструкция: [INSTRUCTION_RU.md](INSTRUCTION_RU.md)
 
-- Linux with Python 3.6 or newer
-- A terminal with 256-color support (most modern terminals have it)
+## What you need
 
-## Project layout
+- Linux and Python 3.6 or newer
+- A terminal with 256-color support (most modern ones have it)
 
-```
-star/
-├── main.py        # the animation
-└── init/
-    └── init.py    # installs the `star` command
-```
-
-## Installation
+## Get the code
 
 ```bash
-cd ~/projects/star/init
+git clone https://github.com/Ghoex/david-star.git
+cd david-star
+```
+
+Or just download the ZIP from GitHub and unpack it wherever you like.
+
+The folder layout looks like this:
+
+```
+david-star/
+├── main.py      # the animation
+└── init/
+    └── init.py  # installs the `star` command
+```
+
+`main.py` has to stay one level above `init/`. Otherwise, the installer won't find it.
+
+## Install
+
+```bash
+cd david-star/init
 python3 init.py
 ```
 
-This creates a `star` launcher in `~/.local/bin`. If that folder is not in your `PATH`, the installer prints the line to add to `~/.bashrc` or `~/.zshrc`. After adding it, open a new terminal.
+That's it. The `star` command ends up in `~/.local/bin`.
 
-Installer options:
-
-| Option | Description |
-| --- | --- |
-| `--name NAME` | Command name to install (default: `star`) |
-| `--dir PATH` | Directory for the launcher (default: `~/.local/bin`) |
-| `--force` | Overwrite an existing file that was not installed by this script |
-| `--uninstall` | Remove the installed launcher |
-
-Examples:
+If the installer says `~/.local/bin` isn't in your `PATH`, run this once and then open a new terminal (or restart your computer):
 
 ```bash
-python3 init.py --dir /usr/local/bin   # system-wide install, may need sudo
-python3 init.py --name spin            # install as `spin` instead
-python3 init.py --uninstall            # remove the command
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.bashrc
 ```
 
-## Usage
+Using zsh? Use `~/.zshrc` instead of `~/.bashrc`.
+
+## Run it
 
 ```bash
-star                        # default: cyan gradient, original art, spins left to right
-star -c magenta             # choose a color preset
-star -s '#*+'               # build the figure from these characters
-star -d up                  # spin from bottom to top
-star -c green -s '@' -d all # combine options
+star
 ```
 
-Press `Ctrl+C` to exit. The terminal cursor is restored on exit.
+Press `Ctrl+C` to stop.
+
+Want to change how it looks? Add options:
+
+```bash
+star -c magenta               # different color
+star -s '#*+'                 # build the star from these characters
+star -d up                    # spin from bottom to top
+star -c green -s '@' -d all   # combine options
+```
 
 ### Options
 
-| Option | Description |
-| --- | --- |
-| `-c`, `--color` | A color preset (`cyan`, `blue`, `green`, `red`, `magenta`, `yellow`, `white`), or a comma-separated list of 256-color codes from back to front, e.g. `27,51,231` |
-| `-s`, `--chars` | Characters to build the figure from, cycled across the figure. Spaces are ignored. Default: the original art |
-| `-d`, `--direction` | `right` (left to right, default), `left`, `up` (bottom to top), `down` (top to bottom), or `all` (tumble in every direction) |
+| Option | What it does | Values |
+| --- | --- | --- |
+| `-c`, `--color` | Sets the color | `cyan` (default), `blue`, `green`, `red`, `magenta`, `yellow`, `white`, or your own 256-color codes like `27,51,231` (from back to front) |
+| `-s`, `--chars` | Characters the star is drawn with | Any characters, e.g. `'#*+'`. Default: the original art |
+| `-d`, `--direction` | Which way it spins | `right` (default), `left`, `up`, `down`, `all` |
 
-Run `star -h` to see the same list in the terminal.
+Not sure what's available? Run `star -h`.
+
+## Don't want to install it?
+
+You can run it straight from the project folder:
+
+```bash
+cd david-star
+python3 main.py -c blue -d down
+```
 
 ## Uninstall
 
 ```bash
-cd ~/projects/star/init
+cd david-star/init
 python3 init.py --uninstall
 ```
 
-The uninstaller only removes files it created. It leaves other commands alone.
+It only removes the `star` file it created. Nothing else gets touched.
 
-## Running without installing
+## Installer options
 
-```bash
-python3 main.py -c blue -d down
-```
+The installer also has a few options of its own:
 
-## How it works
+| Option | What it does |
+| --- | --- |
+| `--name NAME` | Install the command under a different name (default: `star`) |
+| `--dir PATH` | Put the command in a different folder (default: `~/.local/bin`) |
+| `--force` | Overwrite an existing file that the installer didn't create |
+| `--uninstall` | Remove the command |
 
-`init.py` writes a small shell script to the chosen directory. The script runs `main.py` with the same Python interpreter used for installation and forwards all arguments, so `star -c magenta` runs `main.py -c magenta`.
+For example, `python3 init.py --name spin` gives you a `spin` command instead.
 
-If you move the `star` folder, run `init.py` again from its new location. The launcher stores the absolute path to `main.py`.
+## Something's not working?
 
-## Troubleshooting
-
-- **`star: command not found`**: `~/.local/bin` is not in your `PATH`. Add `export PATH="$HOME/.local/bin:$PATH"` to your shell config and open a new terminal. You can also run the launcher directly with `~/.local/bin/star`.
-- **`main.py not found`**: the launcher points to a missing file. Make sure `main.py` is in the parent folder of `init/`, then run the installer again.
-- **Colors look wrong or dim**: try a brighter preset, such as `-c white` or `-c cyan`, or use a terminal with 256-color support.
+- **`star: command not found`**: your `PATH` doesn't include `~/.local/bin` yet. Add the line from the install section, then open a new terminal. You can also run `~/.local/bin/star` directly.
+- **`main.py not found`**: `main.py` isn't one level above `init/`. Move it there and run the installer again.
+- **Colors look dim**: try `-c white`, or switch to a terminal that supports 256 colors.
+- **Moved the folder?** Run `python3 init.py` again from its new location.
